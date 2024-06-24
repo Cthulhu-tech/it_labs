@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { Card, GroupEnum, IUseCardStore } from './type';
+import { Card, IUseCardStore } from './type';
 
 export const useCardStore = defineStore('useCardStore', {
   state: (): IUseCardStore => ({
