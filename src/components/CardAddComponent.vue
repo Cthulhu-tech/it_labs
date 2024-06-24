@@ -30,7 +30,7 @@
                     type="button"
                     @click="submit"
                 >
-                    Добавить
+                    {{ props.type === 'create' ? 'Добавить' : 'Обновить' }}
                 </button>
                 <button
                     class="button add close"
@@ -46,35 +46,53 @@
 
 <script lang="ts" setup>
 import { VueFinalModal } from 'vue-final-modal';
-import { computed, defineEmits } from 'vue';
+import { computed, defineEmits, reactive } from 'vue';
 import { useForm } from 'vee-validate';
 import { Card, GroupEnum } from '@/stores/type';
 import { useCardStore } from '@/stores/cardStore';
 import { string } from 'yup';
+import { defineProps, withDefaults } from "vue";
+import { PropsCardAddComponent } from '@/interface/type';
+
+const props = withDefaults(defineProps<PropsCardAddComponent>(), {
+    type: 'create',
+    card: () => ({
+        id: 0,
+        FIO: '',
+        company: '',
+        group: GroupEnum.passerby,
+        side: false,
+    }),
+});
 
 const emit = defineEmits<{
     (e: 'confirm'): void
 }>();
 
 const cardStore = useCardStore();
-const maxId = computed(() => cardStore.getMaxId + 1);
-
+const id = computed(() => props.type === 'create' ? (cardStore.getMaxId + 1) : props.card.id);
+const initialValue = reactive({
+    id: id.value,
+    group: props.card.group,
+    company: props.card.company,
+    FIO: props.card.FIO,
+    side: props.card.side,
+});
 const { errors, defineField, handleSubmit } = useForm<Card>({
-  initialValues: {
-    id: maxId.value,
-    group: GroupEnum.customer,
-    company: '',
-    FIO: '',
-    side: false,
-  },
+  initialValues: initialValue,
   validationSchema: {
-    company: string().required().matches(/^(\S+$)/g),
-    FIO: string().required().matches(/^(\S+$)/g),
+    company: string().trim().required(),
+    FIO: string().trim().required(),
   },
 });
 
 const submit = handleSubmit((values) => {
-    cardStore.createNewCard(values);
+    if(props.type === 'create') {
+        cardStore.createNewCard(values);
+        emit('confirm');
+        return;
+    }
+    cardStore.updateCard(values);
     emit('confirm');
 });
 

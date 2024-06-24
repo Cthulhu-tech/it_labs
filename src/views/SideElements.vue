@@ -6,13 +6,7 @@
     <span>Группа</span>
     <span>Присутствие</span>
   </div>
-  <div class="card" v-for="card in cards" :key="card.id">
-    <span>{{ card.id }}</span>
-    <span>{{ card.FIO }}</span>
-    <span>{{ card.company }}</span>
-    <span>{{ card.group }}</span>
-    <div class="presence" :class="{inside: card.side}"/>
-  </div>
+  <CardComponent :card="card" v-for="card in cards" :key="card.id" />
 </template>
 
 <script lang="ts" setup>
@@ -20,6 +14,7 @@ import { useCardStore } from '@/stores/cardStore';
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 import { FilterEnum } from '@/router/type';
+import CardComponent from '@/components/CardComponent.vue';
 
 const route = useRoute();
 const filter = computed(() => route.params.filter);

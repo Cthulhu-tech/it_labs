@@ -34,12 +34,12 @@
 import { useModal } from 'vue-final-modal';
 import { FilterEnum } from '@/router/type';
 import { useCardStore } from '@/stores/cardStore';
-import CreateCard from '@/components/CreateCard.vue';
+import CardAddComponent from '@/components/CardAddComponent.vue';
 
 const cardStore = useCardStore();
 
 const { open, close } = useModal({
-  component: CreateCard,
+  component: CardAddComponent,
   attrs: {
       onConfirm() {
         close()

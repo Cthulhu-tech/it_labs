@@ -4,23 +4,15 @@ import { Card, GroupEnum, IUseCardStore } from './type';
 export const useCardStore = defineStore('useCardStore', {
   state: (): IUseCardStore => ({
     search: '',
-    cards: [{
-      id: 1,
-      FIO: 'Зубенко Михаил Петрович',
-      company: 'OOO "АСОЛЬ"',
-      group: GroupEnum.partner,
-      side: true,
-    },{
-      id: 2,
-      FIO: 'Зубенко Михаил Петрович',
-      company: 'OOO "АСОЛЬ"',
-      group: GroupEnum.passerby,
-      side: false,
-    }],
+    cards: [],
   }),
   actions: {
     createNewCard(card: Card) {
       this.cards.push(card);
+    },
+    updateCard(card: Card) {
+      const index = this.cards.findIndex(_card => _card.id === card.id);
+      this.cards.splice(index, 1, card);
     },
   },
   getters: {
@@ -40,8 +32,12 @@ export const useCardStore = defineStore('useCardStore', {
       return this.cards.filter((card) => !card.side).length;
     },
     getMaxId():number {
-      const idArray = this.cards.map((card) => card.id);
-      return Math.max(...idArray) || 1;
-    }
+      if(this.cards.length) {
+        const idArray = this.cards.map((card) => card.id);
+        return Math.max(...idArray);
+      }
+      return 0;
+    },
   },
+  persist: true,
 });
